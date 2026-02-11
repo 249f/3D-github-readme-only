@@ -1031,6 +1031,14 @@
                     front.style.transform = `rotateX(-90deg)`;
                     front.style.transformOrigin = 'bottom';
 
+                    // Right face
+                    const right = document.createElement('div');
+                    right.className = 'cell-right';
+                    right.style.width = `${height}px`;
+                    right.style.background = colors.right;
+                    right.style.transform = `rotateY(90deg)`;
+                    right.style.transformOrigin = 'right';
+
                     // Left face
                     const left = document.createElement('div');
                     left.className = 'cell-left';
