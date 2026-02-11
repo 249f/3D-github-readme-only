@@ -41,10 +41,10 @@ function fetchContributions(username) {
 
 function parseContributions(html) {
     const data = [];
-    const regex = /<td[^>]*data-date="([^"]*)"[^>]*data-level="([^"]*)"[^>]*>[\s\S]*?<\/td>/gi;
+    const entriesRegex = /<td[^>]*data-date="([^"]*)"[^>]*data-level="([^"]*)"[^>]*>[\s\S]*?<\/td>/gi;
     let match;
 
-    while ((match = regex.exec(html)) !== null) {
+    while ((match = entriesRegex.exec(html)) !== null) {
         const date = match[1];
         const level = parseInt(match[2], 10) || 0;
 
@@ -59,5 +59,16 @@ function parseContributions(html) {
 
         data.push({ date, count, level });
     }
-    return data;
+
+    // Extract total count from header (e.g., "3,456 contributions in the last year")
+    let totalCount = 0;
+    const totalMatch = html.match(/([\d,]+)\s+contributions?\s+in\s+the\s+last\s+year/i);
+    if (totalMatch) {
+        totalCount = parseInt(totalMatch[1].replace(/,/g, ''), 10);
+    } else {
+        // Fallback to sum if header not found
+        totalCount = data.reduce((s, d) => s + d.count, 0);
+    }
+
+    return { contributions: data, totalCount };
 }
