@@ -369,6 +369,8 @@
             width: 100%;
             height: 100%;
             border-radius: 2px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            /* Specular highlight */
             transition: filter 0.2s, background 0.2s;
         }
 
@@ -388,6 +390,22 @@
             top: 0;
             right: 0;
             border-radius: 0 2px 2px 0;
+        }
+
+        .cell-left {
+            position: absolute;
+            height: 100%;
+            transform-origin: left;
+            top: 0;
+            left: 0;
+        }
+
+        .cell-back {
+            position: absolute;
+            width: 100%;
+            transform-origin: top;
+            top: 0;
+            left: 0;
         }
 
         /* Tooltip */
@@ -798,10 +816,10 @@
 
         const LEVEL_COLORS = {
             0: { top: '#161b22', front: '#0d1117', right: '#10151c' },
-            1: { top: '#0e4429', front: '#0a3520', right: '#0b3a23' },
-            2: { top: '#006d32', front: '#005526', right: '#005e2b' },
-            3: { top: '#26a641', front: '#1e8535', right: '#21923a' },
-            4: { top: '#39d353', front: '#2db344', right: '#30c049' },
+            1: { top: '#0e4429', front: '#07301c', right: '#052615' },
+            2: { top: '#006d32', front: '#005526', right: '#00441d' },
+            3: { top: '#26a641', front: '#1e8535', right: '#186d2b' },
+            4: { top: '#39d353', front: '#2db344', right: '#26a03b' },
         };
 
         const BASE_HEIGHT = 3;
@@ -1021,9 +1039,27 @@
                     right.style.transform = `rotateY(90deg)`;
                     right.style.transformOrigin = 'right';
 
+                    // Left face
+                    const left = document.createElement('div');
+                    left.className = 'cell-left';
+                    left.style.width = `${height}px`;
+                    left.style.background = colors.right || colors.front; // Use side color
+                    left.style.transform = `rotateY(-90deg)`;
+                    left.style.transformOrigin = 'left';
+
+                    // Back face
+                    const back = document.createElement('div');
+                    back.className = 'cell-back';
+                    back.style.height = `${height}px`;
+                    back.style.background = colors.front;
+                    back.style.transform = `rotateX(90deg) translateZ(${-14}px)`; // Offset by cell width
+                    back.style.transformOrigin = 'top';
+
                     cell.appendChild(top);
                     cell.appendChild(front);
                     cell.appendChild(right);
+                    cell.appendChild(left);
+                    cell.appendChild(back);
 
                     // Tooltip events
                     cell.addEventListener('mouseenter', e => showTooltip(e, d));

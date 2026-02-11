@@ -6,10 +6,10 @@ const https = require('https');
 // ===== CONFIG =====
 const LEVEL_COLORS = {
   0: { top: '#161b22', left: '#0d1117', right: '#10151c' },
-  1: { top: '#0e4429', left: '#0a3520', right: '#0b3a23' },
-  2: { top: '#006d32', left: '#005526', right: '#005e2b' },
-  3: { top: '#26a641', left: '#1e8535', right: '#21923a' },
-  4: { top: '#39d353', left: '#2db344', right: '#30c049' },
+  1: { top: '#0e4429', left: '#07301c', right: '#052615' },
+  2: { top: '#006d32', left: '#005526', right: '#00441d' },
+  3: { top: '#26a641', left: '#1e8535', right: '#186d2b' },
+  4: { top: '#39d353', left: '#2db344', right: '#26a03b' },
 };
 
 const BG_COLOR = '#0a0e17';
@@ -243,6 +243,9 @@ function generateSVG(data, username) {
 
       // Top face
       paths += `<path d="M${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} Z" fill="${colors.top}"/>`;
+
+      // Specular highlight on top edge
+      paths += `<path d="M${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)}" fill="none" stroke="white" stroke-width="0.3" stroke-opacity="0.2"/>`;
     }
   }
 
