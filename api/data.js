@@ -16,7 +16,8 @@ module.exports = async function handler(req, res) {
         }
 
         // Set caching headers
-        res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400');
+        //image age
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=60');
         return res.status(200).json({ user: username, contributions: data });
     } catch (err) {
         console.error('Error fetching data:', err);
