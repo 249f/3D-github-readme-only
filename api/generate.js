@@ -235,10 +235,14 @@ function generateSVG(data, username) {
         p[key].y += offsetY;
       }
 
-      // Left face (visible side)
+      // Back faces (rendered first)
+      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.b_br.x)},${f(p.b_br.y)} Z" fill="${colors.left}" opacity="0.8"/>`;
+      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.b_fl.x)},${f(p.b_fl.y)} Z" fill="${colors.right}" opacity="0.8"/>`;
+
+      // Front-Left face (visible side)
       paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.b_bl.x)},${f(p.b_bl.y)} Z" fill="${colors.left}"/>`;
 
-      // Right face (visible side)
+      // Front-Right face (visible side)
       paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="${colors.right}"/>`;
 
       // Top face
