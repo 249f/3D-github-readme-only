@@ -1110,8 +1110,7 @@
         // ===== TOOLTIP =====
         function showTooltip(e, d) {
             const dateStr = formatDate(d.date);
-            const countStr = d.count === 0 ? 'No' : d.count;
-            tooltipEl.innerHTML = `<span class="tt-count">${countStr} contribution${d.count !== 1 ? 's' : ''}</span> <span class="tt-date">on ${dateStr}</span>`;
+            tooltipEl.innerHTML = `<span class="tt-date">${dateStr}</span>`;
             tooltipEl.classList.add('visible');
             moveTooltip(e);
         }
