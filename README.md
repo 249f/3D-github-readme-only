@@ -18,7 +18,7 @@ Just paste one line into your profile `README.md`.
 You don't need to fork this repo or deploy anything. To show your own 3D graph, just copy and paste this line into your GitHub profile `README.md`:
 
 ```markdown
-![3D Contrib](https://3-d-github-readme-only.vercel.app/api/generate?user=YOUR_GITHUB_USERNAME)
+![3D Contrib](https://3-d-github-readme-only.vercel.app/api/generate?user=249f)
 ```
 
 > [!IMPORTANT]
