@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D GitHub Contributions — No Actions Required</title>
+  <meta name="description" content="Generate a stunning 3D isometric visualization of any GitHub user's contribution graph. No tokens, no GitHub Actions — just a username.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --border-glass: rgba(255, 255, 255, 0.06);
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b949e;
+      --text-muted: #484f58;
+      --accent: #39d353;
+      --accent-glow: rgba(57, 211, 83, 0.3);
+      --gh-0: #161b22;
+      --gh-1: #0e4429;
+      --gh-2: #006d32;
+      --gh-3: #26a641;
+      --gh-4: #39d353;
+      --radius: 16px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ===== AMBIENT BACKGROUND ===== */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .ambient::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 70vw;
+      height: 70vw;
+      background: radial-gradient(circle, rgba(57, 211, 83, 0.06) 0%, transparent 70%);
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+    .ambient::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      right: -15%;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(30, 100, 200, 0.05) 0%, transparent 70%);
+      animation: drift 25s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(80px, 40px) scale(1.1); }
+    }
+
+    /* ===== LAYOUT ===== */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      padding: 48px 0 0;
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(57, 211, 83, 0.08);
+      border: 1px solid rgba(57, 211, 83, 0.15);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 24px;
+      letter-spacing: 0.02em;
+    }
+    .badge svg { flex-shrink: 0; }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--accent) 0%, #58e876 40%, #79f296 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      font-weight: 400;
+    }
+
+    /* ===== SEARCH AREA ===== */
+    .search-wrapper {
+      max-width: 560px;
+      margin: 0 auto 56px;
+    }
+    .search-box {
+      display: flex;
+      gap: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .search-box:focus-within {
+      border-color: rgba(57, 211, 83, 0.35);
+      box-shadow: 0 0 0 4px rgba(57, 211, 83, 0.08), 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .search-box input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 16px 20px;
+      font-size: 1rem;
+      font-family: var(--font);
+      color: var(--text-primary);
+      outline: none;
+    }
+    .search-box input::placeholder { color: var(--text-muted); }
+    .search-box button {
+      padding: 16px 28px;
+      background: linear-gradient(135deg, #26a641, #39d353);
+      color: #fff;
+      border: none;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .search-box button:hover { opacity: 0.9; }
+    .search-box button:active { transform: scale(0.97); }
+    .search-box button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .error-msg {
+      color: #f85149;
+      font-size: 0.85rem;
+      margin-top: 12px;
+      display: none;
+      text-align: center;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ===== RESULT SECTION ===== */
+    .result-section {
+      display: none;
+      margin-bottom: 80px;
+    }
+    .result-section.visible { display: block; }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .user-info img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--border-glass);
+    }
+    .user-info .name {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .user-info .handle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .total-contributions {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .total-contributions span {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .action-btns button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border-glass);
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .action-btns button:hover {
+      border-color: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+    }
+    .action-btns button svg { width: 16px; height: 16px; }
+
+    /* ===== 3D SCENE ===== */
+    .scene-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(17,24,39,0.9) 0%, rgba(10,14,23,0.95) 100%);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(20px);
+      padding: 40px 20px;
+      min-height: 420px;
+    }
+
+    .scene-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1200px;
+      min-height: 380px;
+    }
+
+    .scene {
+      transform-style: preserve-3d;
+      transform: rotateX(55deg) rotateZ(-30deg);
+      transition: transform 0.3s ease-out;
+    }
+
+    .grid {
+      display: grid;
+      transform-style: preserve-3d;
+      gap: 3px;
+    }
+
+    .cell {
+      width: 14px;
+      height: 14px;
+      position: relative;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .cell:hover {
+      transform: translateZ(4px);
+    }
+    .cell:hover .cell-top {
+      filter: brightness(1.3);
+    }
+
+    /* Block faces */
+    .cell-top {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
+      transition: filter 0.2s, background 0.2s;
+    }
+    .cell-front {
+      position: absolute;
+      width: 100%;
+      transform-origin: bottom;
+      bottom: 0;
+      left: 0;
+      border-radius: 0 0 2px 2px;
+    }
+    .cell-right {
+      position: absolute;
+      height: 100%;
+      transform-origin: right;
+      top: 0;
+      right: 0;
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      padding: 8px 14px;
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      font-family: var(--font);
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.15s;
+      backdrop-filter: blur(12px);
+      white-space: nowrap;
+    }
+    .tooltip.visible { opacity: 1; }
+    .tooltip .tt-count { color: var(--accent); font-weight: 700; }
+    .tooltip .tt-date { color: var(--text-secondary); }
+
+    /* Month labels */
+    .month-labels {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 12px;
+      padding-left: 30px;
+    }
+    .month-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .legend-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* ===== LOADING ===== */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 14, 23, 0.85);
+      border-radius: var(--radius);
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+    .loading-overlay.visible { display: flex; }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border-glass);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== 2D FLAT CALENDAR VIEW ===== */
+    .flat-calendar {
+      margin-top: 32px;
+    }
+    .flat-calendar h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+    .flat-grid-wrapper {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .flat-grid {
+      display: grid;
+      grid-template-rows: repeat(7, 14px);
+      grid-auto-flow: column;
+      grid-auto-columns: 14px;
+      gap: 3px;
+    }
+    .flat-cell {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: outline 0.15s;
+    }
+    .flat-cell:hover {
+      outline: 2px solid rgba(255,255,255,0.3);
+      outline-offset: -1px;
+    }
+
+    /* ===== FEATURES SECTION ===== */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 60px 0 80px;
+    }
+    .feature-card {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(57, 211, 83, 0.2);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(57, 211, 83, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border-glass);
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 12px 24px;
+      border-radius: 10px;
+      background: rgba(57, 211, 83, 0.15);
+      border: 1px solid rgba(57, 211, 83, 0.25);
+      color: var(--accent);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      font-weight: 500;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(12px);
+    }
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      header { padding-top: 32px; }
+      .scene-container { padding: 24px 12px; }
+      .result-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="tooltip" id="tooltip"></div>
+  <div class="toast" id="toast"></div>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="badge">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        No GitHub Actions Required
+      </div>
+      <h1>3D <span class="gradient">GitHub</span> Contributions</h1>
+      <p class="subtitle">Generate a stunning 3D isometric visualization of any GitHub profile's contribution graph. No tokens, no setup — just a username.</p>
+    </header>
+
+    <!-- SEARCH -->
+    <div class="search-wrapper">
+      <form class="search-box" id="searchForm">
+        <input type="text" id="usernameInput" placeholder="Enter GitHub username or profile URL..." autocomplete="off" spellcheck="false">
+        <button type="submit" id="searchBtn">Generate 3D</button>
+      </form>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <!-- RESULT -->
+    <section class="result-section" id="resultSection">
+      <div class="result-header">
+        <div class="user-info" id="userInfo">
+          <img id="userAvatar" src="" alt="">
+          <div>
+            <div class="name" id="userName"></div>
+            <div class="handle" id="userHandle"></div>
+          </div>
+        </div>
+        <div class="total-contributions" id="totalContribs"></div>
+      </div>
+
+      <!-- 3D Scene -->
+      <div class="scene-container" id="sceneContainer">
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+        </div>
+        <div class="scene-wrapper">
+          <div class="scene" id="scene">
+            <div class="grid" id="grid3d"></div>
+          </div>
+        </div>
+        <div class="legend">
+          <span>Less</span>
+          <div class="legend-cell" style="background: var(--gh-0)"></div>
+          <div class="legend-cell" style="background: var(--gh-1)"></div>
+          <div class="legend-cell" style="background: var(--gh-2)"></div>
+          <div class="legend-cell" style="background: var(--gh-3)"></div>
+          <div class="legend-cell" style="background: var(--gh-4)"></div>
+          <span>More</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="margin-top: 20px;">
+        <div class="action-btns">
+          <button onclick="downloadImage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PNG
+          </button>
+          <button onclick="copyEmbedCode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Copy Embed Code
+          </button>
+          <button onclick="shareLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share Link
+          </button>
+        </div>
+      </div>
+
+      <!-- 2D Calendar -->
+      <div class="flat-calendar">
+        <h3>📅 Flat Calendar View</h3>
+        <div class="flat-grid-wrapper">
+          <div class="flat-grid" id="flatGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <div class="features" id="features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Zero Setup</h3>
+        <p>No GitHub Actions, no personal access tokens, no repository setup. Just enter a username and get instant results.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <h3>Real 3D Rendering</h3>
+        <p>CSS 3D transforms create a beautiful isometric view with depth, lighting, and smooth hover interactions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>Works for Any Profile</h3>
+        <p>Enter any public GitHub username to visualize their contribution history — yours or anyone else's.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      Built with ❤️ — <a href="https://github.com" target="_blank">View on GitHub</a>
+    </div>
+  </footer>
+
+  <script>
+    // ===== CONFIG =====
+    const CORS_PROXIES = [
+      url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    ];
+
+    const LEVEL_COLORS = {
+      0: { top: '#161b22', front: '#0d1117', right: '#10151c' },
+      1: { top: '#0e4429', front: '#0a3520', right: '#0b3a23' },
+      2: { top: '#006d32', front: '#005526', right: '#005e2b' },
+      3: { top: '#26a641', front: '#1e8535', right: '#21923a' },
+      4: { top: '#39d353', front: '#2db344', right: '#30c049' },
+    };
+
+    const BASE_HEIGHT = 3;
+    const MAX_HEIGHT = 32;
+
+    // ===== STATE =====
+    let contributionData = [];
+    let currentUsername = '';
+
+    // ===== DOM =====
+    const form = document.getElementById('searchForm');
+    const input = document.getElementById('usernameInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultSection = document.getElementById('resultSection');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const grid3d = document.getElementById('grid3d');
+    const flatGrid = document.getElementById('flatGrid');
+    const scene = document.getElementById('scene');
+    const tooltipEl = document.getElementById('tooltip');
+
+    // ===== URL PARAMS =====
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const user = params.get('user') || params.get('username');
+      if (user) {
+        input.value = user;
+        setTimeout(() => generate(user), 300);
+      }
+    })();
+
+    // ===== EVENTS =====
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const raw = input.value.trim();
+      if (!raw) return;
+      const username = parseUsername(raw);
+      if (!username) {
+        showError('Please enter a valid GitHub username or profile URL.');
+        return;
+      }
+      generate(username);
+    });
+
+    // ===== CORE LOGIC =====
+    function parseUsername(raw) {
+      // Handle full URL
+      try {
+        const url = new URL(raw);
+        if (url.hostname === 'github.com' || url.hostname === 'www.github.com') {
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (parts.length >= 1) return parts[0];
+        }
+      } catch {}
+      // Handle plain username
+      const cleaned = raw.replace(/^@/, '').replace(/\/$/, '');
+      if (/^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/.test(cleaned)) {
+        return cleaned;
+      }
+      return null;
+    }
+
+    async function generate(username) {
+      currentUsername = username;
+      hideError();
+      showLoading(true);
+      resultSection.classList.add('visible');
+      document.getElementById('features').style.display = 'none';
+
+      // Update URL
+      const newUrl = `${window.location.pathname}?user=${username}`;
+      window.history.replaceState({}, '', newUrl);
+
+      // Set user info
+      document.getElementById('userAvatar').src = `https://github.com/${username}.png?size=96`;
+      document.getElementById('userName').textContent = username;
+      document.getElementById('userHandle').textContent = `github.com/${username}`;
+
+      try {
+        const data = await fetchContributions(username);
+        contributionData = data;
+        const total = data.reduce((s, d) => s + d.count, 0);
+        document.getElementById('totalContribs').innerHTML = `<span>${total.toLocaleString()}</span> contributions in the last year`;
+        render3D(data);
+        renderFlat(data);
+        showLoading(false);
+
+        // Smooth scroll to result
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        showLoading(false);
+        resultSection.classList.remove('visible');
+        document.getElementById('features').style.display = '';
+        showError(err.message || 'Failed to load contributions. Please check the username.');
+        console.error(err);
+      }
+    }
+
+    async function fetchContributions(username) {
+      const targetUrl = `https://github.com/users/${username}/contributions`;
+      let html = null;
+      let lastError = null;
+
+      for (const proxy of CORS_PROXIES) {
+        try {
+          const res = await fetch(proxy(targetUrl), { signal: AbortSignal.timeout(10000) });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          html = await res.text();
+          break;
+        } catch (e) {
+          lastError = e;
+        }
+      }
+
+      if (!html) {
+        throw new Error('Could not fetch contribution data. The CORS proxy may be temporarily unavailable, or the username might be invalid.');
+      }
+
+      return parseContributions(html);
+    }
+
+    function parseContributions(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Try newer GitHub structure: <td> with data-date and data-level
+      let cells = doc.querySelectorAll('td.ContributionCalendar-day');
+      if (cells.length === 0) {
+        // Fallback: try tool-tip based structure
+        cells = doc.querySelectorAll('td[data-date]');
+      }
+      if (cells.length === 0) {
+        // Fallback: try rect elements (older GitHub)
+        const rects = doc.querySelectorAll('rect.ContributionCalendar-day, rect[data-date]');
+        if (rects.length > 0) {
+          return Array.from(rects).map(rect => ({
+            date: rect.getAttribute('data-date') || '',
+            count: parseInt(rect.getAttribute('data-count') || '0', 10),
+            level: parseInt(rect.getAttribute('data-level') || '0', 10),
+          })).filter(d => d.date);
+        }
+        throw new Error('Could not parse contribution data. GitHub may have changed their page structure.');
+      }
+
+      const data = [];
+      cells.forEach(td => {
+        const date = td.getAttribute('data-date');
+        if (!date) return;
+        const level = parseInt(td.getAttribute('data-level') || '0', 10);
+        // Try to extract count from tool-tip child or aria-label
+        let count = 0;
+        const tip = td.querySelector('tool-tip, span.sr-only');
+        if (tip) {
+          const match = tip.textContent.match(/(\d+)\s+contribution/i);
+          if (match) count = parseInt(match[1], 10);
+        }
+        if (count === 0 && level > 0) {
+          // Estimate from level
+          count = [0, 1, 4, 8, 16][level] || level;
+        }
+        data.push({ date, count, level });
+      });
+
+      if (data.length === 0) {
+        throw new Error('No contribution data found for this user.');
+      }
+      return data;
+    }
+
+    // ===== 3D RENDERING =====
+    function render3D(data) {
+      grid3d.innerHTML = '';
+      const weeks = groupByWeeks(data);
+      const numWeeks = weeks.length;
+      const CELL_SIZE = 14;
+      const GAP = 3;
+
+      grid3d.style.gridTemplateColumns = `repeat(${numWeeks}, ${CELL_SIZE}px)`;
+      grid3d.style.gridTemplateRows = `repeat(7, ${CELL_SIZE}px)`;
+
+      const maxCount = Math.max(...data.map(d => d.count), 1);
+
+      // Render cells column by column (week by week)
+      for (let week = 0; week < numWeeks; week++) {
+        for (let day = 0; day < 7; day++) {
+          const d = weeks[week][day];
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+
+          if (!d) {
+            cell.style.visibility = 'hidden';
+            grid3d.appendChild(cell);
+            continue;
+          }
+
+          const level = d.level;
+          const colors = LEVEL_COLORS[level] || LEVEL_COLORS[0];
+          const height = level === 0 ? BASE_HEIGHT : BASE_HEIGHT + (d.count / maxCount) * MAX_HEIGHT;
+
+          // Top face
+          const top = document.createElement('div');
+          top.className = 'cell-top';
+          top.style.background = colors.top;
+          top.style.transform = `translateZ(${height}px)`;
+
+          // Front face
+          const front = document.createElement('div');
+          front.className = 'cell-front';
+          front.style.height = `${height}px`;
+          front.style.background = colors.front;
+          front.style.transform = `rotateX(-90deg)`;
+          front.style.transformOrigin = 'bottom';
+
+          // Right face
+          const right = document.createElement('div');
+          right.className = 'cell-right';
+          right.style.width = `${height}px`;
+          right.style.background = colors.right;
+          right.style.transform = `rotateY(90deg)`;
+          right.style.transformOrigin = 'right';
+
+          cell.appendChild(top);
+          cell.appendChild(front);
+          cell.appendChild(right);
+
+          // Tooltip events
+          cell.addEventListener('mouseenter', e => showTooltip(e, d));
+          cell.addEventListener('mousemove', e => moveTooltip(e));
+          cell.addEventListener('mouseleave', hideTooltip);
+
+          grid3d.appendChild(cell);
+        }
+      }
+
+      // Entry animation
+      const cells = grid3d.querySelectorAll('.cell');
+      cells.forEach((cell, i) => {
+        cell.style.opacity = '0';
+        cell.style.transform = 'translateZ(-20px)';
+        cell.style.transition = 'none';
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            cell.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            cell.style.opacity = '1';
+            cell.style.transform = '';
+          }, Math.min(i * 1.5, 600));
+        });
+      });
+    }
+
+    function groupByWeeks(data) {
+      if (data.length === 0) return [];
+
+      // Sort by date
+      const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
+      const weeks = [];
+      let currentWeek = [];
+
+      // Fill initial offset
+      const firstDate = new Date(sorted[0].date + 'T00:00:00');
+      const firstDay = firstDate.getDay(); // 0=Sun
+      for (let i = 0; i < firstDay; i++) {
+        currentWeek.push(null);
+      }
+
+      for (const d of sorted) {
+        currentWeek.push(d);
+        if (currentWeek.length === 7) {
+          weeks.push(currentWeek);
+          currentWeek = [];
+        }
+      }
+      if (currentWeek.length > 0) {
+        while (currentWeek.length < 7) currentWeek.push(null);
+        weeks.push(currentWeek);
+      }
+      return weeks;
+    }
+
+    // ===== FLAT CALENDAR =====
+    function renderFlat(data) {
+      flatGrid.innerHTML = '';
+      const weeks = groupByWeeks(data);
+
+      for (let week = 0; week < weeks.length; week++) {
+        for (let day = 0; day < 7; day++) {
+          const d = weeks[week][day];
+          const cell = document.createElement('div');
+          cell.className = 'flat-cell';
+
+          if (!d) {
+            cell.style.visibility = 'hidden';
+            flatGrid.appendChild(cell);
+            continue;
+          }
+
+          const colors = LEVEL_COLORS[d.level] || LEVEL_COLORS[0];
+          cell.style.background = colors.top;
+
+          cell.addEventListener('mouseenter', e => showTooltip(e, d));
+          cell.addEventListener('mousemove', e => moveTooltip(e));
+          cell.addEventListener('mouseleave', hideTooltip);
+
+          flatGrid.appendChild(cell);
+        }
+      }
+    }
+
+    // ===== TOOLTIP =====
+    function showTooltip(e, d) {
+      const dateStr = formatDate(d.date);
+      const countStr = d.count === 0 ? 'No' : d.count;
+      tooltipEl.innerHTML = `<span class="tt-count">${countStr} contribution${d.count !== 1 ? 's' : ''}</span> <span class="tt-date">on ${dateStr}</span>`;
+      tooltipEl.classList.add('visible');
+      moveTooltip(e);
+    }
+
+    function moveTooltip(e) {
+      tooltipEl.style.left = `${e.clientX + 14}px`;
+      tooltipEl.style.top = `${e.clientY - 10}px`;
+    }
+
+    function hideTooltip() {
+      tooltipEl.classList.remove('visible');
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // ===== ACTIONS =====
+    async function downloadImage() {
+      try {
+        // Use html2canvas approach — we'll canvas-capture the scene
+        const container = document.getElementById('sceneContainer');
+        const canvas = document.createElement('canvas');
+        const scale = 2;
+        canvas.width = container.offsetWidth * scale;
+        canvas.height = container.offsetHeight * scale;
+        const ctx = canvas.getContext('2d');
+
+        // Draw background
+        ctx.fillStyle = '#0a0e17';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw contribution blocks as simple isometric on canvas
+        const data = contributionData;
+        const weeks = groupByWeeks(data);
+        const maxCount = Math.max(...data.map(d => d.count), 1);
+        const cellW = 12 * scale;
+        const cellH = 12 * scale;
+        const gapX = 3 * scale;
+        const gapY = 3 * scale;
+        const offsetX = 60 * scale;
+        const offsetY = 40 * scale;
+
+        // Isometric projection helpers
+        const isoX = (col, row) => offsetX + (col - row) * (cellW + gapX) * 0.5 + canvas.width * 0.3;
+        const isoY = (col, row, h) => offsetY + (col + row) * (cellH + gapY) * 0.3 - h + canvas.height * 0.15;
+
+        for (let w = 0; w < weeks.length; w++) {
+          for (let d = 0; d < 7; d++) {
+            const entry = weeks[w][d];
+            if (!entry) continue;
+            const level = entry.level;
+            const colors = LEVEL_COLORS[level];
+            const height = level === 0 ? 2 * scale : (2 + (entry.count / maxCount) * 20) * scale;
+
+            const x = isoX(w, d);
+            const y = isoY(w, d, height);
+
+            // Top face
+            ctx.fillStyle = colors.top;
+            ctx.fillRect(x, y, cellW, cellH * 0.6);
+
+            // Front face
+            ctx.fillStyle = colors.front;
+            ctx.fillRect(x, y + cellH * 0.6, cellW, height * 0.4);
+          }
+        }
+
+        // Add watermark
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.font = `${14 * scale}px Inter, sans-serif`;
+        ctx.fillText(`@${currentUsername} — 3D GitHub Contributions`, 20 * scale, canvas.height - 16 * scale);
+
+        // Download
+        const link = document.createElement('a');
+        link.download = `${currentUsername}-3d-contributions.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        showToast('Image downloaded!');
+      } catch (err) {
+        showToast('Could not generate image.');
+        console.error(err);
+      }
+    }
+
+    function copyEmbedCode() {
+      const pageUrl = window.location.origin + window.location.pathname;
+      const code = `[![3D GitHub Contributions](${pageUrl}?user=${currentUsername})](${pageUrl}?user=${currentUsername})`;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('Embed code copied to clipboard!');
+      }).catch(() => {
+        // Fallback
+        prompt('Copy this embed code:', code);
+      });
+    }
+
+    function shareLink() {
+      const url = `${window.location.origin}${window.location.pathname}?user=${currentUsername}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Share link copied!');
+      }).catch(() => {
+        prompt('Share this link:', url);
+      });
+    }
+
+    // ===== HELPERS =====
+    function showLoading(show) {
+      loadingOverlay.classList.toggle('visible', show);
+      searchBtn.disabled = show;
+      searchBtn.textContent = show ? 'Loading...' : 'Generate 3D';
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('visible');
+    }
+
+    function hideError() {
+      errorMsg.classList.remove('visible');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+
+    // ===== MOUSE INTERACTION FOR 3D SCENE =====
+    const sceneContainer = document.getElementById('sceneContainer');
+    let isDragging = false;
+    let startX, startY, rotX = 55, rotZ = -30;
+
+    sceneContainer.addEventListener('mousedown', e => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      sceneContainer.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      rotZ += dx * 0.3;
+      rotX = Math.max(20, Math.min(80, rotX - dy * 0.3));
+      scene.style.transform = `rotateX(${rotX}deg) rotateZ(${rotZ}deg)`;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      sceneContainer.style.cursor = '';
+    });
+  </script>
+</body>
+</html>

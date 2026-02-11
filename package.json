@@ -1,0 +1,7 @@
+{
+    "name": "3d-github-contributions",
+    "version": "1.0.0",
+    "description": "3D isometric GitHub contribution graph — no GitHub Actions required",
+    "private": true,
+    "license": "MIT"
+}
