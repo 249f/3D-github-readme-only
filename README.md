@@ -7,7 +7,7 @@
 **No GitHub Actions • No Tokens • No Setup**  
 Just paste one line into your `README.md`.
 
-[🚀 **Live Demo**](https://3d-github-readme-only.vercel.app/?user=torvalds) · [📖 How It Works](#how-it-works) · [⚡ Deploy Your Own](#deploy-your-own)
+[🚀 **Live Demo**](https://3-d-github-readme-only.vercel.app/?user=249f) · [📖 How It Works](#how-it-works) · [⚡ Deploy Your Own](#deploy-your-own)
 
 </div>
 
