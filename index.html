@@ -731,7 +731,8 @@
                 style="margin-top: 40px; border-top: 1px solid var(--border-glass); padding-top: 32px;">
                 <h3>🔗 Embed in your GitHub README</h3>
                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-                    Paste this code into your profile README.md to show your live 3D graph (no GitHub Actions required).
+                    Paste this &lt;img&gt; tag into your profile README.md to show your live 3D graph (no GitHub Actions
+                    required).
                 </p>
                 <div
                     style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; border: 1px solid var(--border-glass); position: relative; overflow-x: auto;">
@@ -907,7 +908,7 @@
 
                 // Update embed code UI
                 const pageUrl = window.location.origin;
-                const embedCode = `![3D GitHub Contributions](${pageUrl}/api/generate?user=${username})`;
+                const embedCode = `<img src="${pageUrl}/api/generate?user=${username}" alt="3d graph"  />`;
                 document.getElementById('embedMarkdownCode').textContent = embedCode;
 
                 return json.contributions;
@@ -1197,11 +1198,11 @@
 
         function copyEmbedCode() {
             const pageUrl = window.location.origin;
-            const code = `![3D GitHub Contributions](${pageUrl}/api/generate?user=${currentUsername})`;
+            const code = `<img src="${pageUrl}/api/generate?user=${currentUsername}" alt="3d graph"  />`;
             navigator.clipboard.writeText(code).then(() => {
-                showToast('README embed code copied!');
+                showToast('README <img> tag copied!');
             }).catch(() => {
-                prompt('Copy this embed code:', code);
+                prompt('Copy this <img> tag:', code);
             });
         }
 
