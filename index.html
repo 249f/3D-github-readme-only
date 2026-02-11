@@ -540,50 +540,49 @@
             outline-offset: -1px;
         }
 
-        /* ===== FEATURES SECTION ===== */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
+        /* ===== FEATURES SUMMARY ===== */
+        .features-summary {
             margin: 60px 0 80px;
-        }
-
-        .feature-card {
-            padding: 28px;
-            border-radius: var(--radius);
+            padding: 40px;
             background: var(--bg-card);
             border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
             backdrop-filter: blur(12px);
-            transition: border-color 0.3s, transform 0.2s;
+            transition: border-color 0.3s;
         }
 
-        .feature-card:hover {
-            border-color: rgba(57, 211, 83, 0.2);
-            transform: translateY(-2px);
+        .features-summary:hover {
+            border-color: rgba(57, 211, 83, 0.15);
         }
 
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(57, 211, 83, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            color: var(--accent);
+        .features-summary h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent) 0%, #79f296 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .feature-card h3 {
-            font-size: 1rem;
-            font-weight: 600;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 32px;
+        }
+
+        .summary-item strong {
+            display: block;
             margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
         }
 
-        .feature-card p {
+        .summary-item p {
             font-size: 0.88rem;
             color: var(--text-secondary);
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         /* ===== FOOTER ===== */
@@ -763,41 +762,23 @@
             </div>
         </section>
 
-        <!-- Features -->
-        <div class="features" id="features">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                    </svg>
+        <!-- Features Summary -->
+        <div class="features-summary" id="features">
+            <h2>Tool Features</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <strong>Zero Configuration</strong>
+                    <p>No GitHub Actions, tokens, or repository setup required. Access any public profile instantly.</p>
                 </div>
-                <h3>Zero Setup</h3>
-                <p>No GitHub Actions, no personal access tokens, no repository setup. Just enter a username and get
-                    instant results.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                    </svg>
+                <div class="summary-item">
+                    <strong>Easy to use</strong>
+                    <p>Simple and easy to use, just copy a single line of code and paste it into your README.md</p>
                 </div>
-                <h3>Real 3D Rendering</h3>
-                <p>CSS 3D transforms create a beautiful isometric view with depth, lighting, and smooth hover
-                    interactions.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="2" y1="12" x2="22" y2="12" />
-                        <path
-                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    </svg>
+
+                <div class="summary-item">
+                    <strong>Free and open source</strong>
+                    <p>Fully Free and also open source, no ads, no tracking, no privacy concerns.</p>
                 </div>
-                <h3>Works for Any Profile</h3>
-                <p>Enter any public GitHub username to visualize their contribution history — yours or anyone else's.
-                </p>
             </div>
         </div>
     </div>
