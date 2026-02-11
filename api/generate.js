@@ -145,19 +145,27 @@ function groupByWeeks(data) {
 }
 
 // ===== ISO PROJECTION =====
-function isoProject(x, y, z) {
+function isoProject(x, y, z, rotateRad = 0) {
+  // Rotate (x, y) by rotateRad first to allow controllable rotation
+  const rx = x * Math.cos(rotateRad) - y * Math.sin(rotateRad);
+  const ry = x * Math.sin(rotateRad) + y * Math.cos(rotateRad);
+
   // Isometric projection: convert 3D grid coords to 2D screen coords
-  const isoX = (x - y) * Math.cos(ISO_ANGLE);
-  const isoY = (x + y) * Math.sin(ISO_ANGLE) - z;
+  const isoX = (rx - ry) * Math.cos(ISO_ANGLE);
+  const isoY = (rx + ry) * Math.sin(ISO_ANGLE) - z;
   return { x: isoX, y: isoY };
 }
 
 // ===== GENERATE SVG =====
-function generateSVG(data, username) {
+function generateSVG(data, username, rotateRad = 0) {
   const weeks = groupByWeeks(data);
   const numWeeks = weeks.length;
   const maxCount = Math.max(...data.map(d => d.count), 1);
   const total = data.reduce((s, d) => s + d.count, 0);
+
+  // Get Current GMT Time for watermark
+  const now = new Date();
+  const timestamp = now.toISOString().replace('T', ' ').split('.')[0] + ' GMT';
 
   const step = CELL_W + GAP;
 
@@ -174,14 +182,14 @@ function generateSVG(data, username) {
 
       // Check all 4 corners of the cell at both z=0 and z=height
       const corners = [
-        isoProject(x, y, 0),
-        isoProject(x + CELL_W, y, 0),
-        isoProject(x, y + CELL_W, 0),
-        isoProject(x + CELL_W, y + CELL_W, 0),
-        isoProject(x, y, height),
-        isoProject(x + CELL_W, y, height),
-        isoProject(x, y + CELL_W, height),
-        isoProject(x + CELL_W, y + CELL_W, height),
+        isoProject(x, y, 0, rotateRad),
+        isoProject(x + CELL_W, y, 0, rotateRad),
+        isoProject(x, y + CELL_W, 0, rotateRad),
+        isoProject(x + CELL_W, y + CELL_W, 0, rotateRad),
+        isoProject(x, y, height, rotateRad),
+        isoProject(x + CELL_W, y, height, rotateRad),
+        isoProject(x, y + CELL_W, height, rotateRad),
+        isoProject(x + CELL_W, y + CELL_W, height, rotateRad),
       ];
       for (const c of corners) {
         if (c.x < minX) minX = c.x;
@@ -218,15 +226,15 @@ function generateSVG(data, username) {
       // 8 corners of the 3D block
       const p = {
         // Bottom face corners
-        b_fl: isoProject(x, y + CELL_W, 0),           // bottom-front-left
-        b_fr: isoProject(x + CELL_W, y + CELL_W, 0),  // bottom-front-right
-        b_bl: isoProject(x, y, 0),                      // bottom-back-left
-        b_br: isoProject(x + CELL_W, y, 0),             // bottom-back-right
+        b_fl: isoProject(x, y + CELL_W, 0, rotateRad),           // bottom-front-left
+        b_fr: isoProject(x + CELL_W, y + CELL_W, 0, rotateRad),  // bottom-front-right
+        b_bl: isoProject(x, y, 0, rotateRad),                      // bottom-back-left
+        b_br: isoProject(x + CELL_W, y, 0, rotateRad),             // bottom-back-right
         // Top face corners
-        t_fl: isoProject(x, y + CELL_W, height),
-        t_fr: isoProject(x + CELL_W, y + CELL_W, height),
-        t_bl: isoProject(x, y, height),
-        t_br: isoProject(x + CELL_W, y, height),
+        t_fl: isoProject(x, y + CELL_W, height, rotateRad),
+        t_fr: isoProject(x + CELL_W, y + CELL_W, height, rotateRad),
+        t_bl: isoProject(x, y, height, rotateRad),
+        t_br: isoProject(x + CELL_W, y, height, rotateRad),
       };
 
       // Apply offset
@@ -266,8 +274,8 @@ function generateSVG(data, username) {
   // Title
   const title = `<text x="${padding}" y="28" fill="${ACCENT_COLOR}" font-size="16" font-weight="700" font-family="Inter, -apple-system, sans-serif">@${escapeXml(username)}</text>`;
 
-  // Watermark
-  const watermark = `<text x="${svgWidth - padding}" y="${svgHeight - 8}" fill="${TEXT_COLOR}" font-size="10" font-family="Inter, -apple-system, sans-serif" text-anchor="end" opacity="0.5">3D GitHub Contributions</text>`;
+  // Watermark (GMT Timestamp)
+  const watermark = `<text x="${svgWidth - padding}" y="${svgHeight - 8}" fill="${TEXT_COLOR}" font-size="9" font-family="Inter, -apple-system, sans-serif" text-anchor="end" opacity="0.6">${timestamp}</text>`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.ceil(svgWidth)}" height="${Math.ceil(svgHeight)}" viewBox="0 0 ${Math.ceil(svgWidth)} ${Math.ceil(svgHeight)}">
   <rect width="100%" height="100%" fill="${BG_COLOR}" rx="12"/>

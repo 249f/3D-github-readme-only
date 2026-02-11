@@ -10,6 +10,13 @@ Add this to your GitHub profile `README.md`:
 ```
 
 
+### Customization
+
+| Parameter | Result | Example |
+| :--- | :--- | :--- |
+| `user` | **GitHub Username** (Required) | `?user=torvalds` |
+| `rotate` | **Rotate Graph** (In degrees) | `?user=torvalds&rotate=45` |
+
 ---
 
-### [� Click here for a Live Demo](https://3-d-github-readme-only.vercel.app/?user=torvalds)
+### [🚀 Click here for a Live Demo](https://3-d-github-readme-only.vercel.app/?user=torvalds)
