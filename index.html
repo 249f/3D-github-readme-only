@@ -392,6 +392,22 @@
             border-radius: 0 2px 2px 0;
         }
 
+        .cell-left {
+            position: absolute;
+            height: 100%;
+            transform-origin: left;
+            top: 0;
+            left: 0;
+        }
+
+        .cell-back {
+            position: absolute;
+            width: 100%;
+            transform-origin: top;
+            top: 0;
+            left: 0;
+        }
+
         /* Tooltip */
         .tooltip {
             position: fixed;
@@ -1015,17 +1031,27 @@
                     front.style.transform = `rotateX(-90deg)`;
                     front.style.transformOrigin = 'bottom';
 
-                    // Right face
-                    const right = document.createElement('div');
-                    right.className = 'cell-right';
-                    right.style.width = `${height}px`;
-                    right.style.background = colors.right;
-                    right.style.transform = `rotateY(90deg)`;
-                    right.style.transformOrigin = 'right';
+                    // Left face
+                    const left = document.createElement('div');
+                    left.className = 'cell-left';
+                    left.style.width = `${height}px`;
+                    left.style.background = colors.right || colors.front; // Use side color
+                    left.style.transform = `rotateY(-90deg)`;
+                    left.style.transformOrigin = 'left';
+
+                    // Back face
+                    const back = document.createElement('div');
+                    back.className = 'cell-back';
+                    back.style.height = `${height}px`;
+                    back.style.background = colors.front;
+                    back.style.transform = `rotateX(90deg) translateZ(${-14}px)`; // Offset by cell width
+                    back.style.transformOrigin = 'top';
 
                     cell.appendChild(top);
                     cell.appendChild(front);
                     cell.appendChild(right);
+                    cell.appendChild(left);
+                    cell.appendChild(back);
 
                     // Tooltip events
                     cell.addEventListener('mouseenter', e => showTooltip(e, d));
