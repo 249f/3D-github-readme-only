@@ -256,9 +256,8 @@ function generateSVG(data, username) {
   });
   legend += `<text x="${legendX + 32 + 5 * 16}" y="${legendY + 10}" fill="${TEXT_COLOR}" font-size="11" font-family="Inter, -apple-system, sans-serif">More</text>`;
 
-  // Title and stats
+  // Title
   const title = `<text x="${padding}" y="28" fill="${ACCENT_COLOR}" font-size="16" font-weight="700" font-family="Inter, -apple-system, sans-serif">@${escapeXml(username)}</text>`;
-  const stats = `<text x="${svgWidth - padding}" y="28" fill="${TEXT_COLOR}" font-size="13" font-family="Inter, -apple-system, sans-serif" text-anchor="end">${total.toLocaleString()} contributions in the last year</text>`;
 
   // Watermark
   const watermark = `<text x="${svgWidth - padding}" y="${svgHeight - 8}" fill="${TEXT_COLOR}" font-size="10" font-family="Inter, -apple-system, sans-serif" text-anchor="end" opacity="0.5">3D GitHub Contributions</text>`;
@@ -266,7 +265,6 @@ function generateSVG(data, username) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.ceil(svgWidth)}" height="${Math.ceil(svgHeight)}" viewBox="0 0 ${Math.ceil(svgWidth)} ${Math.ceil(svgHeight)}">
   <rect width="100%" height="100%" fill="${BG_COLOR}" rx="12"/>
   ${title}
-  ${stats}
   ${paths}
   ${legend}
   ${watermark}
