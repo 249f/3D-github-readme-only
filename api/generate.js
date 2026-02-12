@@ -244,16 +244,17 @@ function generateSVG(data, username, rotateRad = 0) {
       }
 
       // Back faces (rendered first)
-      // Back Face 1 (Diagnostic: Green)
-      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.b_br.x)},${f(p.b_br.y)} Z" fill="green" opacity="0.8"/>`;
-      // Back Face 2 (Diagnostic: Yellow)
-      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.b_fl.x)},${f(p.b_fl.y)} Z" fill="yellow" opacity="0.8"/>`;
+      // Left Wall (Diagnostic: Green)
+      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.b_fl.x)},${f(p.b_fl.y)} Z" fill="green" opacity="0.8"/>`;
+      // Back Wall (Diagnostic: Yellow)
+      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.b_br.x)},${f(p.b_br.y)} Z" fill="yellow" opacity="0.8"/>`;
 
-      // Front-Left face (Diagnostic: Red)
-      paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.b_bl.x)},${f(p.b_bl.y)} Z" fill="red"/>`;
+      // Visible sides (facing the viewer)
+      // Right Wall (Diagnostic: Blue)
+      paths += `<path d="M${f(p.b_br.x)},${f(p.b_br.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="blue"/>`;
 
-      // Front-Right face (Diagnostic: Blue)
-      paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="blue"/>`;
+      // Front Wall (Diagnostic: Red)
+      paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="red"/>`;
 
       // Top face
       paths += `<path d="M${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} Z" fill="${colors.top}"/>`;
