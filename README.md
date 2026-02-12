@@ -15,7 +15,7 @@ Add this to your GitHub profile `README.md`:
 | Parameter | Result | Example |
 | :--- | :--- | :--- |
 | `user` | **GitHub Username** (Required) | `?user=torvalds` |
-| `rotate` | **Rotate Graph** (In degrees) | `?user=torvalds&rotate=45` |
+
 
 ---
 
