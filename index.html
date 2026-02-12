@@ -1004,35 +1004,35 @@
                     top.style.background = colors.top;
                     top.style.transform = `translateZ(${height}px)`;
 
-                    // Front face
+                    // Front face (Diagnostic: Red)
                     const front = document.createElement('div');
                     front.className = 'cell-front';
                     front.style.height = `${height}px`;
-                    front.style.background = colors.front;
+                    front.style.background = 'red'; // Debug: Front
                     front.style.transform = `rotateX(-90deg)`;
                     front.style.transformOrigin = 'bottom';
 
-                    // Right face
+                    // Right face (Diagnostic: Blue)
                     const right = document.createElement('div');
                     right.className = 'cell-right';
                     right.style.width = `${height}px`;
-                    right.style.background = colors.right;
+                    right.style.background = 'blue'; // Debug: Right
                     right.style.transform = `rotateY(90deg)`;
                     right.style.transformOrigin = 'right';
 
-                    // Left face
+                    // Left face (Diagnostic: Green)
                     const left = document.createElement('div');
                     left.className = 'cell-left';
                     left.style.width = `${height}px`;
-                    left.style.background = colors.right || colors.front; // Use side color
+                    left.style.background = 'green'; // Debug: Left
                     left.style.transform = `rotateY(-90deg)`;
                     left.style.transformOrigin = 'left';
 
-                    // Back face
+                    // Back face (Diagnostic: Yellow)
                     const back = document.createElement('div');
                     back.className = 'cell-back';
                     back.style.height = `${height}px`;
-                    back.style.background = colors.front;
+                    back.style.background = 'yellow'; // Debug: Back
                     back.style.transform = `rotateX(90deg) translateZ(${-14}px)`; // Offset by cell width
                     back.style.transformOrigin = 'top';
 
