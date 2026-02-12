@@ -793,14 +793,14 @@
 
     <script>
         // ===== CONFIG =====
-        // No more flaky CORS proxies! We use our own internal API
-
+        // No more flaky CORS proxies! We use our own internal 
+        //color control
         const LEVEL_COLORS = {
-            0: { top: '#161b22', front: '#0d1117', right: '#10151c' },
-            1: { top: '#0e4429', front: '#07301c', right: '#052615' },
-            2: { top: '#006d32', front: '#005526', right: '#00441d' },
-            3: { top: '#26a641', front: '#1e8535', right: '#186d2b' },
-            4: { top: '#39d353', front: '#2db344', right: '#26a03b' },
+            0: { top: '#161b22', front: '#0d1117', right: '#10151c', left: '#10151c', back: '#0d1117' },
+            1: { top: '#0e4429', front: '#07301c', right: '#052615', left: '#052615', back: '#07301c' },
+            2: { top: '#006d32', front: '#005526', right: '#00441d', left: '#00441d', back: '#005526' },
+            3: { top: '#26a641', front: '#1e8535', right: '#186d2b', left: '#186d2b', back: '#1e8535' },
+            4: { top: '#39d353', front: '#2db344', right: '#26a03b', left: '#26a03b', back: '#2db344' },
         };
 
         const BASE_HEIGHT = 3;
@@ -1004,36 +1004,36 @@
                     top.style.background = colors.top;
                     top.style.transform = `translateZ(${height}px)`;
 
-                    // Front face (Diagnostic: Red)
+                    // Front face
                     const front = document.createElement('div');
                     front.className = 'cell-front';
                     front.style.height = `${height}px`;
-                    front.style.background = 'red'; // Debug: Front
+                    front.style.background = colors.front;
                     front.style.transform = `rotateX(-90deg)`;
                     front.style.transformOrigin = 'bottom';
 
-                    // Right face (Diagnostic: Blue)
+                    // Right face
                     const right = document.createElement('div');
                     right.className = 'cell-right';
                     right.style.width = `${height}px`;
-                    right.style.background = 'blue'; // Debug: Right
+                    right.style.background = colors.right;
                     right.style.transform = `rotateY(90deg)`;
                     right.style.transformOrigin = 'right';
 
-                    // Left face (Diagnostic: Green)
+                    // Left face
                     const left = document.createElement('div');
                     left.className = 'cell-left';
                     left.style.width = `${height}px`;
-                    left.style.background = 'green'; // Debug: Left
+                    left.style.background = colors.left;
                     left.style.transform = `rotateY(-90deg)`;
                     left.style.transformOrigin = 'left';
 
-                    // Back face (Diagnostic: Yellow)
+                    // Back face
                     const back = document.createElement('div');
                     back.className = 'cell-back';
                     back.style.height = `${height}px`;
-                    back.style.background = 'yellow'; // Debug: Back
-                    back.style.transform = `rotateX(90deg)`; // Stands up at y=0
+                    back.style.background = colors.back;
+                    back.style.transform = `rotateX(90deg)`;
                     back.style.transformOrigin = 'top';
 
                     cell.appendChild(top);

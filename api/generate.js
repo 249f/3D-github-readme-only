@@ -4,12 +4,13 @@
 const https = require('https');
 
 // ===== CONFIG =====
+//color control
 const LEVEL_COLORS = {
-  0: { top: '#161b22', left: '#0d1117', right: '#10151c' },
-  1: { top: '#0e4429', left: '#07301c', right: '#052615' },
-  2: { top: '#006d32', left: '#005526', right: '#00441d' },
-  3: { top: '#26a641', left: '#1e8535', right: '#186d2b' },
-  4: { top: '#39d353', left: '#2db344', right: '#26a03b' },
+  0: { top: '#161b22', front: '#0d1117', right: '#10151c', left: '#10151c', back: '#0d1117' },
+  1: { top: '#0e4429', front: '#07301c', right: '#052615', left: '#052615', back: '#07301c' },
+  2: { top: '#006d32', front: '#005526', right: '#00441d', left: '#00441d', back: '#005526' },
+  3: { top: '#26a641', front: '#1e8535', right: '#186d2b', left: '#186d2b', back: '#1e8535' },
+  4: { top: '#39d353', front: '#2db344', right: '#26a03b', left: '#26a03b', back: '#2db344' },
 };
 
 const BG_COLOR = '#0a0e17';
@@ -244,17 +245,17 @@ function generateSVG(data, username, rotateRad = 0) {
       }
 
       // Back faces (rendered first)
-      // Left Wall (Diagnostic: Green)
-      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.b_fl.x)},${f(p.b_fl.y)} Z" fill="green" opacity="0.8"/>`;
-      // Back Wall (Diagnostic: Yellow)
-      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.b_br.x)},${f(p.b_br.y)} Z" fill="yellow" opacity="0.8"/>`;
+      // Left Wall
+      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.b_fl.x)},${f(p.b_fl.y)} Z" fill="${colors.left}" opacity="0.8"/>`;
+      // Back Wall
+      paths += `<path d="M${f(p.b_bl.x)},${f(p.b_bl.y)} L${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.b_br.x)},${f(p.b_br.y)} Z" fill="${colors.back}" opacity="0.8"/>`;
 
       // Visible sides (facing the viewer)
-      // Right Wall (Diagnostic: Blue)
-      paths += `<path d="M${f(p.b_br.x)},${f(p.b_br.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="blue"/>`;
+      // Right Wall
+      paths += `<path d="M${f(p.b_br.x)},${f(p.b_br.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="${colors.right}"/>`;
 
-      // Front Wall (Diagnostic: Red)
-      paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="red"/>`;
+      // Front Wall
+      paths += `<path d="M${f(p.b_fl.x)},${f(p.b_fl.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.b_fr.x)},${f(p.b_fr.y)} Z" fill="${colors.front}"/>`;
 
       // Top face
       paths += `<path d="M${f(p.t_bl.x)},${f(p.t_bl.y)} L${f(p.t_br.x)},${f(p.t_br.y)} L${f(p.t_fr.x)},${f(p.t_fr.y)} L${f(p.t_fl.x)},${f(p.t_fl.y)} Z" fill="${colors.top}"/>`;
