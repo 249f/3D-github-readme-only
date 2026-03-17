@@ -709,13 +709,23 @@
                 style="margin-top: 40px; border-top: 1px solid var(--border-glass); padding-top: 32px;">
                 <h3>🔗 Embed in your GitHub README</h3>
                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-                    Paste this &lt;img&gt; tag into your profile README.md to show your live 3D graph (no GitHub Actions
+                    Paste this &lt;img&gt; tag into your profile README.md to show your live graph (no GitHub Actions
                     required).
                 </p>
+
+                <div style="margin-bottom: 8px;"><strong>3D Graph:</strong></div>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; border: 1px solid var(--border-glass); position: relative; overflow-x: auto; margin-bottom: 16px;">
+                    <code id="embedMarkdownCode" style="color: var(--accent); white-space: pre;"></code>
+                    <button onclick="copyEmbedCode('3d')"
+                        style="position: absolute; right: 8px; top: 8px; padding: 4px 8px; background: var(--accent); color: #000; border: none; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Copy</button>
+                </div>
+
+                <div style="margin-bottom: 8px;"><strong>2D Flat Graph:</strong></div>
                 <div
                     style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; border: 1px solid var(--border-glass); position: relative; overflow-x: auto;">
-                    <code id="embedMarkdownCode" style="color: var(--accent); white-space: pre;"></code>
-                    <button onclick="copyEmbedCode()"
+                    <code id="embedFlatCode" style="color: var(--accent); white-space: pre;"></code>
+                    <button onclick="copyEmbedCode('2d')"
                         style="position: absolute; right: 8px; top: 8px; padding: 4px 8px; background: var(--accent); color: #000; border: none; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Copy</button>
                 </div>
             </div>
@@ -731,12 +741,12 @@
                         </svg>
                         Download PNG
                     </button>
-                    <button onclick="copyEmbedCode()">
+                    <button onclick="copyEmbedCode('3d')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="16 18 22 12 16 6" />
                             <polyline points="8 6 2 12 8 18" />
                         </svg>
-                        Copy Embed Code
+                        Copy 3D Embed
                     </button>
                     <button onclick="shareLink()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -913,6 +923,9 @@
                 const pageUrl = window.location.origin;
                 const embedCode = `<img src="${pageUrl}/api/generate?user=${username}" alt="3d graph"  />`;
                 document.getElementById('embedMarkdownCode').textContent = embedCode;
+
+                const flatEmbedCode = `<img src="${pageUrl}/api/flat?user=${username}" alt="2d flat graph"  />`;
+                document.getElementById('embedFlatCode').textContent = flatEmbedCode;
 
                 return json.contributions;
             } catch (e) {
@@ -1216,9 +1229,11 @@
             }
         }
 
-        function copyEmbedCode() {
+        function copyEmbedCode(type = '3d') {
             const pageUrl = window.location.origin;
-            const code = `<img src="${pageUrl}/api/generate?user=${currentUsername}" alt="3d graph"  />`;
+            const endpoint = type === '2d' ? 'flat' : 'generate';
+            const alt = type === '2d' ? '2d flat graph' : '3d graph';
+            const code = `<img src="${pageUrl}/api/${endpoint}?user=${currentUsername}" alt="${alt}"  />`;
             navigator.clipboard.writeText(code).then(() => {
                 showToast('README <img> tag copied!');
             }).catch(() => {
